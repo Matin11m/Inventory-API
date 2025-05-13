@@ -70,13 +70,15 @@ Response:
 
     Method: GET
 
-    Parameters:
+    **Parameters:**
 
-        limit: (optional) Number of items per page.
+```json
+{
+  "limit": "(optional) Number of items per page.",
+  "offset": "(optional) The page number.",
+  "fields": "(optional) Comma-separated fields to include in the response."
+}
 
-        offset: (optional) The page number.
-
-        fields: (optional) Comma-separated fields to include in the response.
 
     Response:
 
@@ -231,3 +233,4 @@ Maintainer
     Email: matin.shahmaleki001@gmail.com
 
     Website: https://www.linkedin.com/in/matin-shahmaleki
+
