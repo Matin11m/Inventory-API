@@ -144,7 +144,7 @@ The **Inventory API** module provides a secure **REST API** to access product an
 
 ---
 
-## Security
+## **Security**
 
 This module uses **JWT (JSON Web Tokens)** for securing access to the API. You need to authenticate using a valid JWT token that can be obtained by logging in with valid credentials.
 
@@ -153,12 +153,12 @@ This module uses **JWT (JSON Web Tokens)** for securing access to the API. You n
 ```ini
 jwt_secret_key = YOUR_SECRET_KEY_HERE
 
-
 You can generate a secret_key using a secure random string generator or by using the Python secrets library:
-
+```ini
 import secrets
 print(secrets.token_urlsafe(64))  # Generates a 64-byte random key
-
+```
+---
 
 Caching
 
