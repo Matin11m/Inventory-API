@@ -25,6 +25,7 @@
     'application': False,
     'license': 'AGPL-3',
     'author': 'Matin Shahmaleki',
+    'Website': 'https://www.linkedin.com/in/matin-shahmaleki',
     'category': 'Inventory',
     'sequence': 10,
     'maintainer': 'matin.shahmaleki001@gmail.com',
