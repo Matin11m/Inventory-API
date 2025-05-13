@@ -1,0 +1,46 @@
+<!--<odoo>-->
+<!--    <record id="view_api_log_tree" model="ir.ui.view">-->
+<!--        <field name="name">api.log.tree</field>-->
+<!--        <field name="model">api.log</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <tree>-->
+<!--                <field name="timestamp"/>-->
+<!--                <field name="user_id"/>-->
+<!--                <field name="path"/>-->
+<!--                <field name="method"/>-->
+<!--                <field name="status_code"/>-->
+<!--                <field name="ip_address"/>-->
+<!--            </tree>-->
+<!--        </field>-->
+<!--    </record>-->
+
+<!--    <record id="view_api_log_form" model="ir.ui.view">-->
+<!--        <field name="name">api.log.form</field>-->
+<!--        <field name="model">api.log</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <form string="API Request Log">-->
+<!--                <group>-->
+<!--                    <field name="timestamp"/>-->
+<!--                    <field name="user_id"/>-->
+<!--                    <field name="path"/>-->
+<!--                    <field name="method"/>-->
+<!--                    <field name="status_code"/>-->
+<!--                    <field name="ip_address"/>-->
+<!--                    <field name="params"/>-->
+<!--                </group>-->
+<!--            </form>-->
+<!--        </field>-->
+<!--    </record>-->
+
+<!--    <record id="action_api_log" model="ir.actions.act_window">-->
+<!--        <field name="name">API Logs</field>-->
+<!--        <field name="res_model">api.log</field>-->
+<!--        <field name="view_mode">tree,form</field>-->
+<!--        <field name="help" type="html">-->
+<!--            <p>لیست درخواست‌های API ثبت‌شده</p>-->
+<!--        </field>-->
+<!--    </record>-->
+
+<!--    <menuitem id="menu_api_log_root" name="API Logs" parent="base.menu_custom" sequence="50"/>-->
+<!--    <menuitem id="menu_api_log" name="Logs" parent="menu_api_log_root" action="action_api_log"/>-->
+<!--</odoo>-->
