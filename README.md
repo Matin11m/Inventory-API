@@ -70,19 +70,14 @@ Response:
 
     Method: GET
 
+    **Parameters:**
 
----
-
-### یا اگر صرفاً توضیحه و نمی‌خوای به شکل JSON دربیاد ولی همچنان رنگ داشته باشه، اینم می‌تونه خوب باشه:
-
-```markdown
-**Parameters:**
-
-```bash
-limit   : (optional) Number of items per page.
-offset  : (optional) The page number.
-fields  : (optional) Comma-separated fields to include in the response.
-
+```json
+{
+  "limit": "(optional) Number of items per page.",
+  "offset": "(optional) The page number.",
+  "fields": "(optional) Comma-separated fields to include in the response."
+}
 
 
     Response:
