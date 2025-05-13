@@ -1,9 +1,6 @@
 # Inventory API
 
-The **Inventory API** module provides a secure **REST API** to access product and stock data in Odoo. This module allows
-third-party applications to interact with Odoo's product and stock information using a set of well-defined endpoints. It
-ensures data security through **JWT-based authentication** and offers advanced features like rate limiting, flexible
-filtering, dynamic field selection, **caching**, and **role-based access control (RBAC)**.
+The **Inventory API** module provides a secure **REST API** to access product and stock data in Odoo. This module allows third-party applications to interact with Odoo's product and stock information using a set of well-defined endpoints. It ensures data security through **JWT-based authentication** and offers advanced features like rate limiting, flexible filtering, dynamic field selection, **caching**, and **role-based access control (RBAC)**.
 
 ## Features
 
@@ -14,10 +11,11 @@ filtering, dynamic field selection, **caching**, and **role-based access control
 - **CRUD operations** on inventory-related data.
 - Seamless integration with Odoo's **stock** and **product** modules.
 - **Export products and stock data** to CSV format.
-- **API Documentation** available for easy integration with third-party applications.
 - **System Monitoring** with real-time logging of API requests.
 - **Caching** of frequently requested data to improve performance.
 - **Role-Based Access Control (RBAC)** for managing permissions and access rights based on user roles.
+
+---
 
 ## Installation
 
@@ -30,9 +28,7 @@ filtering, dynamic field selection, **caching**, and **role-based access control
 ### Steps to Install:
 
 1. Clone the repository to your Odoo **custom addons** directory.
-2. Add the path to your `odoo.conf` file in the **`addons_path`**.
-
-   Example:
+2. Add the path to your `odoo.conf` file in the **`addons_path`**:
 
     ```ini
     [options]
@@ -42,118 +38,121 @@ filtering, dynamic field selection, **caching**, and **role-based access control
 3. Update your Odoo apps list from the Odoo interface.
 4. Install the **Inventory API** module from the Odoo interface.
 
-### Example API Requests:
+---
 
-#### 1. **Login (JWT Authentication)**
+## Example API Requests
 
-* **Endpoint**: `/api/login`
-* **Method**: POST
-* **Body**:
+### 1. Login (JWT Authentication)
 
-  ```json
-  {
-    "username": "testuser",
-    "password": "password123"
-  }
+- **Endpoint**: `/api/login`
+- **Method**: POST
+- **Body**:
 
-Response:
-
-{
-  "token": "your_jwt_token_here"
-}
-
-
-
-2. Get Products
-
-    Endpoint: /api/products
-
-    Method: GET
-
-    **Parameters:**
-
-```json
-{
-  "limit": "(optional) Number of items per page.",
-  "offset": "(optional) The page number.",
-  "fields": "(optional) Comma-separated fields to include in the response."
-}
-
-
-    Response:
-
-{
-  "status": "success",
-  "data": [
+    ```json
     {
-      "id": 1,
-      "name": "Product A",
-      "list_price": 100,
-      "qty_available": 50
+      "username": "testuser",
+      "password": "password123"
     }
-  ],
-  "pagination": {
-    "limit": 10,
-    "offset": 0,
-    "total": 50
-  }
-}
+    ```
 
+- **Response**:
 
-
-
-3. Get Stock Information
-
-    Endpoint: /api/stock
-
-    Method: GET
-
-    Parameters:
-
-        location_id: (optional) The ID of the stock location to filter by.
-
-    Response:
-
-{
-  "status": "success",
-  "data": [
+    ```json
     {
-      "product_id": 1,
-      "location_id": 1,
-      "quantity": 100
+      "token": "your_jwt_token_here"
     }
-  ]
-}
+    ```
 
+---
 
+### 2. Get Products
 
+- **Endpoint**: `/api/products`
+- **Method**: GET
+- **Parameters**:
 
-4. Export Data
+    ```json
+    {
+      "limit": "(optional) Number of items per page.",
+      "offset": "(optional) The page number.",
+      "fields": "(optional) Comma-separated fields to include in the response."
+    }
+    ```
 
-    Endpoint: /api/products/export
+- **Response**:
 
-    Method: GET
+    ```json
+    {
+      "status": "success",
+      "data": [
+        {
+          "id": 1,
+          "name": "Product A",
+          "list_price": 100,
+          "qty_available": 50
+        }
+      ],
+      "pagination": {
+        "limit": 10,
+        "offset": 0,
+        "total": 50
+      }
+    }
+    ```
 
-    Parameters:
+---
 
-        limit: (optional) The number of products to export.
+### 3. Get Stock Information
 
-        fields: (optional) Comma-separated fields to include in the export.
+- **Endpoint**: `/api/stock`
+- **Method**: GET
+- **Parameters**:
+    - `location_id`: *(optional)* The ID of the stock location to filter by.
 
-    Response: The response will be a CSV file that contains the exported data.
+- **Response**:
 
-id,name,default_code,list_price,qty_available
-1,Product A,PA123,100,50
-2,Product B,PB123,150,30
+    ```json
+    {
+      "status": "success",
+      "data": [
+        {
+          "product_id": 1,
+          "location_id": 1,
+          "quantity": 100
+        }
+      ]
+    }
+    ```
 
-Security
+---
 
-This module uses JWT (JSON Web Tokens) for securing access to the API. You need to authenticate using a valid JWT token that can be obtained by logging in with valid credentials.
+### 4. Export Data
 
-The secret key used for JWT encoding/decoding is defined in your odoo.conf file:
+- **Endpoint**: `/api/products/export`
+- **Method**: GET
+- **Parameters**:
+    - `limit`: *(optional)* The number of products to export.
+    - `fields`: *(optional)* Comma-separated fields to include in the export.
 
+- **Response**: CSV file
 
+    ```csv
+    id,name,default_code,list_price,qty_available
+    1,Product A,PA123,100,50
+    2,Product B,PB123,150,30
+    ```
+
+---
+
+## Security
+
+This module uses **JWT (JSON Web Tokens)** for securing access to the API. You need to authenticate using a valid JWT token that can be obtained by logging in with valid credentials.
+
+**Secret key** is defined in your `odoo.conf` file:
+
+```ini
 jwt_secret_key = YOUR_SECRET_KEY_HERE
+
 
 You can generate a secret_key using a secure random string generator or by using the Python secrets library:
 
