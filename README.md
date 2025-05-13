@@ -160,76 +160,68 @@ print(secrets.token_urlsafe(64))  # Generates a 64-byte random key
 ```
 ---
 
-Caching
+**Caching**
+---
 
 This module implements caching to store frequently requested data and reduce the load on the database. Caching helps improve the performance of the API by storing the results of database queries for a specified period.
 
-Caching Strategy:
+### **Caching Strategy**:
+- Frequently accessed data, such as product lists or stock information, is cached.
+- Cache invalidation occurs when there is a change in the underlying data, ensuring that stale data is not served.
 
-    Frequently accessed data, such as product lists or stock information, is cached.
-
-    Cache invalidation occurs when there is a change in the underlying data, ensuring that stale data is not served.
-
-
-
-Cache Invalidation:
-
+### **Cache Invalidation**:
 For example, when a product's price or quantity is updated, the cache for that product will be invalidated, and a fresh value will be fetched from the database.
 
+---
 
-System Monitoring
+**System Monitoring**
+---
 
 This module includes real-time monitoring of API requests. All API requests are logged with detailed information, such as:
+- **User making the request**.
+- **API endpoint accessed**.
+- **IP address** of the client making the request.
+- **HTTP method** (GET, POST, PUT, DELETE).
+- **Parameters** sent in the request.
+- **Response status** and **response time** in milliseconds.
 
-    User making the request.
+These logs can be accessed through the Odoo backend by navigating to the **API Log** menu.
 
-    API endpoint accessed.
+### **API Logs in Odoo**:
+You can monitor and view the logs of API requests in the Odoo interface under the **API Log** section. This allows you to trace activities and ensure that the API is functioning as expected.
 
-    IP address of the client making the request.
+---
 
-    HTTP method (GET, POST, PUT, DELETE).
+**Role-Based Access Control (RBAC)**
+---
 
-    Parameters sent in the request.
+The module includes **Role-Based Access Control (RBAC)**, which allows you to define fine-grained permissions based on user roles. This ensures that only authorized users can access specific data or perform certain actions.
 
-    Response status and response time in milliseconds.
+### **Role Permissions**:
+- **Admins** have full access to all endpoints and operations.
+- **Stock Managers** can view and manage stock-related data.
+- **Product Managers** can access product information and perform CRUD operations.
 
-These logs can be accessed through the Odoo backend by navigating to the API Log menu.
+The access permissions are defined in the **`ir.model.access.csv`** file, which controls which models and operations are accessible by specific user groups.
 
-API Logs in Odoo:
+---
 
-You can monitor and view the logs of API requests in the Odoo interface under the API Log section. This allows you to trace activities and ensure that the API is functioning as expected.
+**License**
+---
 
+This module is licensed under the **AGPL-3** license.
 
-Role-Based Access Control (RBAC)
+---
 
-The module includes Role-Based Access Control (RBAC), which allows you to define fine-grained permissions based on user roles. This ensures that only authorized users can access specific data or perform certain actions.
-
-
-Role Permissions:
-
-    Admins have full access to all endpoints and operations.
-
-    Stock Managers can view and manage stock-related data.
-
-    Product Managers can access product information and perform CRUD operations.
-
-The access permissions are defined in the ir.model.access.csv file, which controls which models and operations are accessible by specific user groups.
-
-
-
-License
-
-This module is licensed under the AGPL-3 license.
-
-Contributing
+**Contributing**
+---
 
 Feel free to fork the repository, contribute improvements, or report issues. All contributions are welcome.
 
-Maintainer
+---
 
-    Matin Shahmaleki
-
-    Email: matin.shahmaleki001@gmail.com
-
-    Website: https://www.linkedin.com/in/matin-shahmaleki
-
+**Maintainer**
+---
+- **Matin Shahmaleki**
+- **Email**: [matin.shahmaleki001@gmail.com](mailto:matin.shahmaleki001@gmail.com)
+- **Website**: [https://www.linkedin.com/in/matin-shahmaleki](https://www.linkedin.com/in/matin-shahmaleki)
