@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_product_product_api,access.product.product.api,product.model_product_product,inventory_api.group_api_manager,1,1,1,0
+access_stock_quant_api,access.stock.quant.api,stock.model_stock_quant,inventory_api.group_api_manager,1,1,1,0
+"access_api_log_admin","API Log Admin","model_api_log","base.group_system",1,1,1,1
