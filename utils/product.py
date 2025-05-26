@@ -1,6 +1,8 @@
 from ..utils import config
 
 
+from ..utils import config
+
 def get_stock_location(env):
     stock_location = env['stock.location'].search([
         ('usage', '=', 'internal'),
@@ -48,7 +50,7 @@ def create_products_and_quants(env, products_data, stock_location):
         created_products.append(product.id)
         quant_vals.append({
             'product_id': product.id,
-            'location_id': stock_location.id,
+            'location_id': stock_location.id if isinstance(stock_location, int) else stock_location.id,
             'quantity': 0
         })
 

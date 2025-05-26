@@ -16,8 +16,8 @@
     This module is designed to integrate seamlessly with Odoo’s stock and product modules.
     """,
     'depends': ['base', 'product', 'stock'],
-    'data': [
-        'security/security_groups.xml',
+    'data':[
+        # 'security/security_groups.xml',
         'security/ir.model.access.csv',
         'views/api_log_views.xml',
     ],
