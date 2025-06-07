@@ -1,49 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-   <odoo>
-       <record id="view_api_log_tree" model="ir.ui.view">
-           <field name="name">api.log.tree</field>
-           <field name="model">api.log</field>
-           <field name="arch" type="xml">
-               <tree>
-                   <field name="request_time"/>
-                   <field name="user_id"/>
-                   <field name="method"/>
-                   <field name="endpoint"/>
-                   <field name="status_code"/>
-                   <field name="response_time_ms"/>
-               </tree>
-           </field>
-       </record>
+<odoo>
+    <record id="view_api_log_tree" model="ir.ui.view">
+        <field name="name">api.log.tree</field>
+        <field name="model">api.log</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="request_time"/>
+                <field name="user_id"/>
+                <field name="method"/>
+                <field name="endpoint"/>
+                <field name="status_code"/>
+                <field name="response_time_ms"/>
+            </tree>
+        </field>
+    </record>
 
-       <record id="view_api_log_form" model="ir.ui.view">
-           <field name="name">api.log.form</field>
-           <field name="model">api.log</field>
-           <field name="arch" type="xml">
-               <form>
-                   <group>
-                       <field name="request_time"/>
-                       <field name="user_id"/>
-                       <field name="method"/>
-                       <field name="endpoint"/>
-                       <field name="status_code"/>
-                       <field name="response_time_ms"/>
-                   </group>
-                   <group string="Request Data">
-                       <field name="request_data" nolabel="1"/>
-                   </group>
-                   <group string="Response Data">
-                       <field name="response_data" nolabel="1"/>
-                   </group>
-               </form>
-           </field>
-       </record>
+    <record id="view_api_log_form" model="ir.ui.view">
+        <field name="name">api.log.form</field>
+        <field name="model">api.log</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="request_time"/>
+                    <field name="user_id"/>
+                    <field name="method"/>
+                    <field name="endpoint"/>
+                    <field name="status_code"/>
+                    <field name="response_time_ms"/>
+                </group>
+                <group string="Request Data">
+                    <field name="request_data" nolabel="1"/>
+                </group>
+                <group string="Response Data">
+                    <field name="response_data" nolabel="1"/>
+                </group>
+            </form>
+        </field>
+    </record>
 
-       <record id="action_api_log" model="ir.actions.act_window">
-           <field name="name">API Logs</field>
-           <field name="res_model">api.log</field>
-           <field name="view_mode">tree,form</field>
-           <field name="view_id" ref="view_api_log_tree"/>
-       </record>
+    <record id="action_api_log" model="ir.actions.act_window">
+        <field name="name">API Logs</field>
+        <field name="res_model">api.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_api_log_tree"/>
+    </record>
 
-       <menuitem id="menu_api_log" name="API Logs" parent="stock.menu_stock_root" action="action_api_log" groups="inventory_api.group_api_manager"/>
-   </odoo>
+    <menuitem id="menu_api_log_root"
+              name="API Logs"
+              parent="base.menu_administration"
+              action="action_api_log"
+              sequence="10"/>
+</odoo>

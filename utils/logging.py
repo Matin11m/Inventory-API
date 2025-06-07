@@ -1,5 +1,6 @@
 import logging
 import json
+import traceback
 
 from odoo import fields
 from odoo.exceptions import AccessError
@@ -17,6 +18,10 @@ def log_error(error_message, exception=None):
 def log_api_request(env, user_id, method, endpoint, request_data, response_data, status_code, response_time_ms,
                     log_level='info'):
     try:
+        if not hasattr(env, 'user') or not hasattr(env, 'cr'):
+            _logger.error(f"Invalid env object passed to log_api_request: {env}")
+            return
+
         is_admin = env.user.has_group('base.group_system')
         if not is_admin:
             logging.getLogger('odoo.addons.inventory_api.utils.logging').warning(
@@ -54,5 +59,5 @@ def log_api_request(env, user_id, method, endpoint, request_data, response_data,
 
     except Exception as e:
         logging.getLogger('odoo.addons.inventory_api.utils.logging').error(
-            "Failed to log API request: %s", str(e)
+            "Failed to log API request: %s\n%s", str(e), traceback.format_exc()
         )

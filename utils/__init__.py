@@ -8,3 +8,5 @@ from . import cache
 from . import product
 from . import response
 from . import config
+from . import dashboard
+from . import monitoring
