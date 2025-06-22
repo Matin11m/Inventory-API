@@ -171,78 +171,98 @@
       }
     },
 "/api/sales": {
-      "get": {
-        "summary": "Retrieve list of sale orders",
-        "operationId": "getSalesOrders",
-        "parameters": [
-          {"name": "Authorization", "in": "header", "required": true, "schema": {"type": "string"}},
-          {"name": "state", "in": "query", "schema": {"type": "string"}},
-          {"name": "date_from", "in": "query", "schema": {"type": "string", "format": "date"}},
-          {"name": "date_to", "in": "query", "schema": {"type": "string", "format": "date"}},
-          {"name": "partner_id", "in": "query", "schema": {"type": "integer"}},
-          {"name": "sort_by", "in": "query", "schema": {"type": "string"}},
-          {"name": "order", "in": "query", "schema": {"type": "string", "enum": ["asc", "desc"]}},
-          {"name": "limit", "in": "query", "schema": {"type": "integer"}},
-          {"name": "offset", "in": "query", "schema": {"type": "integer"}},
-          {"name": "filter", "in": "query", "schema": {"type": "string"}},
-          {"name": "If-None-Match", "in": "header", "schema": {"type": "string"}}
-        ],
-        "responses": {
-          "200": {
-            "description": "List of sale orders",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {"type": "integer"},
-                    "success": {"type": "boolean"},
-                    "data": {
-                      "type": "array",
-                      "items": { "$ref": "#/components/schemas/SaleOrder" }
+  "get": {
+    "summary": "Retrieve list of sale orders",
+    "operationId": "getSalesOrders",
+    "parameters": [
+      {"name": "Authorization", "in": "header", "required": true, "schema": {"type": "string"}},
+      {"name": "state", "in": "query", "schema": {"type": "string"}},
+      {"name": "date_from", "in": "query", "schema": {"type": "string", "format": "date"}},
+      {"name": "date_to", "in": "query", "schema": {"type": "string", "format": "date"}},
+      {"name": "partner_id", "in": "query", "schema": {"type": "integer"}},
+      {"name": "sort_by", "in": "query", "schema": {"type": "string"}},
+      {"name": "order", "in": "query", "schema": {"type": "string", "enum": ["asc", "desc"]}},
+      {"name": "limit", "in": "query", "schema": {"type": "integer"}},
+      {"name": "offset", "in": "query", "schema": {"type": "integer"}},
+      {"name": "filter", "in": "query", "schema": {"type": "string"}},
+      {"name": "If-None-Match", "in": "header", "schema": {"type": "string"}}
+    ],
+    "responses": {
+      "200": {
+        "description": "List of sale orders",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": { "type": "integer" },
+                "success": { "type": "boolean" },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "integer" },
+                      "name": { "type": "string" },
+                      "partner_id": { "type": "integer" },
+                      "amount_total": { "type": "number" },
+                      "state": { "type": "string" },
+                      "date_order": { "type": "string", "format": "date-time" }
                     }
                   }
                 }
               }
             }
-          },
-          "304": { "description": "Not Modified" },
-          "400": { "description": "Invalid request" },
-          "401": { "description": "Unauthorized" }
+          }
         }
-      }
-    },
+      },
+      "304": { "description": "Not Modified" },
+      "400": { "description": "Invalid request" },
+      "401": { "description": "Unauthorized" }
+    }
+  }
+},
     "/api/sales/{sale_id}": {
-      "get": {
-        "summary": "Retrieve a sale order by ID",
-        "operationId": "getSaleOrderById",
-        "parameters": [
-          {"name": "Authorization", "in": "header", "required": true, "schema": {"type": "string"}},
-          {"name": "sale_id", "in": "path", "required": true, "schema": {"type": "integer"}},
-          {"name": "If-None-Match", "in": "header", "schema": {"type": "string"}}
-        ],
-        "responses": {
-          "200": {
-            "description": "Sale order data",
-            "content": {
-              "application/json": {
-                "schema": {
+  "get": {
+    "summary": "Retrieve a sale order by ID",
+    "operationId": "getSaleOrderById",
+    "parameters": [
+      {"name": "Authorization", "in": "header", "required": true, "schema": {"type": "string"}},
+      {"name": "sale_id", "in": "path", "required": true, "schema": {"type": "integer"}},
+      {"name": "If-None-Match", "in": "header", "schema": {"type": "string"}}
+    ],
+    "responses": {
+      "200": {
+        "description": "Sale order data",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": { "type": "integer" },
+                "success": { "type": "boolean" },
+                "data": {
                   "type": "object",
                   "properties": {
-                    "status": {"type": "integer"},
-                    "success": {"type": "boolean"},
-                    "data": { "$ref": "#/components/schemas/SaleOrder" }
+                    "id": { "type": "integer" },
+                    "name": { "type": "string" },
+                    "partner_id": { "type": "integer" },
+                    "amount_total": { "type": "number" },
+                    "state": { "type": "string" },
+                    "date_order": { "type": "string", "format": "date-time" }
                   }
                 }
               }
             }
-          },
-          "304": { "description": "Not Modified" },
-          "404": { "description": "Sale order not found" },
-          "401": { "description": "Unauthorized" }
+          }
         }
-      }
-    },
+      },
+      "304": { "description": "Not Modified" },
+      "404": { "description": "Sale order not found" },
+      "401": { "description": "Unauthorized" }
+    }
+  }
+},
     "/api/products/export": {
       "get": {
         "summary": "Export products to CSV with stock > 0",
