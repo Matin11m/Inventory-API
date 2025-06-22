@@ -8,6 +8,7 @@ import time
 import traceback
 from datetime import datetime, timedelta
 from functools import wraps
+from hashlib import sha256
 
 import magic
 from PIL import Image
@@ -20,6 +21,7 @@ from odoo.tools import cache
 from odoo.tools import image_process
 from ..utils import config, validators, response, logging as api_logging
 from ..utils.auth import create_jwt_token, decode_jwt_token
+from ..utils.config import ALLOWED_SORTS, MAX_LIMIT
 from ..utils.dashboard import MonitoringDashboard
 from ..utils.json_filter import parse_filter_param, parse_customer_filter_param
 from ..utils.json_filter import parse_stock_filter_param
@@ -28,6 +30,7 @@ from ..utils.product import get_stock_location, check_duplicates
 from ..utils.query import build_product_domain, get_customer_by_id, get_customer_count, build_customer_domain
 from ..utils.query import build_stock_domain
 from ..utils.rate_limit import rate_limited, RateLimiter
+from ..utils.response import make_json_response, compute_etag
 from ..utils.validators import validate_limit_offset, extract_valid_fields, validate_username, validate_password, \
     validate_invoice_data, validate_invoice_line, validate_customer_data, validate_limit_offset2
 
@@ -306,6 +309,122 @@ class InventoryAuthController(http.Controller):
                 status=500,
                 content_type='application/json'
             )
+
+    @http.route('/api/sales', type='http', auth='none', methods=['GET'], csrf=False)
+    @require_auth
+    def get_sales_orders(self, **kwargs):
+
+        domain = []
+
+        filter_param = kwargs.get("filter")
+        if filter_param:
+            try:
+                domain += parse_filter_param(filter_param)
+            except Exception as e:
+                payload = {"status": 400, "success": False, "error": str(e)}
+                return http.Response(json.dumps(payload), status=400, content_type='application/json')
+
+        state = kwargs.get('state')
+        if state:
+            domain.append(('state', '=', state))
+
+        date_from = kwargs.get('date_from')
+        if date_from:
+            domain.append(('date_order', '>=', date_from))
+
+        date_to = kwargs.get('date_to')
+        if date_to:
+            domain.append(('date_order', '<=', date_to))
+
+        partner_id = kwargs.get('partner_id')
+        if partner_id and partner_id.isdigit():
+            domain.append(('partner_id', '=', int(partner_id)))
+
+        sort_by = kwargs.get('sort_by', 'date_order')
+        if sort_by not in ALLOWED_SORTS:
+            payload = {"status": 400, "success": False, "error": "invalid sort field"}
+            return http.Response(json.dumps(payload), status=400, content_type='application/json')
+
+        order_dir = kwargs.get('order', 'desc').lower()
+        if order_dir not in ('asc', 'desc'):
+            payload = {"status": 400, "success": False, "error": "invalid order param"}
+            return http.Response(json.dumps(payload), status=400, content_type='application/json')
+
+        order_string = f"{sort_by} {order_dir}"
+
+        try:
+            limit = int(kwargs.get('limit', 50))
+            offset = int(kwargs.get('offset', 0))
+        except ValueError:
+            payload = {"status": 400, "success": False, "error": "limit/offset must be integer"}
+            return http.Response(json.dumps(payload), status=400, content_type='application/json')
+
+        limit = min(max(limit, 0), MAX_LIMIT)
+        offset = max(offset, 0)
+
+        fields = ['id', 'name', 'partner_id', 'date_order', 'state', 'amount_total']
+        records = request.env['sale.order'].sudo().search_read(
+            domain,
+            fields=fields,
+            limit=limit,
+            offset=offset,
+            order=order_string,
+        )
+
+        for rec in records:
+            if isinstance(rec.get('partner_id'), (list, tuple)) and rec['partner_id']:
+                rec['partner'] = rec['partner_id'][1]
+            else:
+                rec['partner'] = False
+            rec.pop('partner_id', None)
+
+            if rec.get('date_order'):
+                if isinstance(rec['date_order'], datetime):
+                    rec['date_order'] = rec['date_order'].strftime('%Y-%m-%d')
+                else:
+                    rec['date_order'] = str(rec['date_order'])[:10]
+
+        payload = {'status': 200, 'success': True, 'data': records}
+        payload_json = json.dumps(payload, default=str)
+        etag = sha256(payload_json.encode()).hexdigest()
+
+        if request.httprequest.headers.get('If-None-Match') == etag:
+            return http.Response(status=304)
+
+        resp = http.Response(payload_json, status=200, content_type='application/json')
+        resp.set_etag(etag)
+        return resp
+
+    @http.route('/api/sales/<int:sale_id>', type='http', auth='none', methods=['GET'], csrf=False)
+    @require_auth
+    def get_sale_order_by_id(self, sale_id, **kwargs):
+        if sale_id <= 0:
+            return make_json_response({'error': 'Invalid sale_id'}, 400)
+
+        order = request.env['sale.order'].sudo().search_read(
+            [('id', '=', sale_id)],
+            fields=['id', 'name', 'partner_id', 'date_order', 'state', 'amount_total'],
+            limit=1
+        )
+
+        if not order:
+            return make_json_response({'error': 'Sale order not found'}, 404)
+
+        record = order[0]
+        record['partner'] = record.pop('partner_id')[1] if record.get('partner_id') else None
+        if isinstance(record.get('date_order'), datetime):
+            record['date_order'] = record['date_order'].strftime('%Y-%m-%d')
+
+        etag = compute_etag(record)
+        if request.httprequest.headers.get('If-None-Match') == etag:
+            return http.Response(status=304)
+
+        return http.Response(
+            json.dumps({'status': 200, 'success': True, 'data': record}),
+            status=200,
+            content_type='application/json',
+            headers={'ETag': etag}
+        )
 
     # @http.route('/api/docs', type='http', auth='none', methods=['GET'], csrf=False)
     # def api_docs(self, **kwargs):
@@ -1001,21 +1120,9 @@ class InventoryAuthController(http.Controller):
             status_code = resp.status_code
             return resp
 
-    def get_customer_count(self, domain):
-        _logger.debug("Counting customers with domain: %s", domain)
-        return request.env['res.partner'].with_user(request.env.user).search_count(domain)
-
-    def get_customer_by_id_cached(self, customer_id, fields):
-        _logger.debug("Fetching customer by ID: %s, fields: %s", customer_id, fields)
-        return request.env['res.partner'].with_user(request.env.user).search_read(
-            domain=[('id', '=', customer_id)],
-            fields=fields,
-            limit=1
-        )
-
     @http.route('/api/customers', type='http', auth='none', methods=['POST'], csrf=False)
     @require_auth
-    @rate_limited(rate_limiter,max_requests=50, time_window=3600)
+    @rate_limited(rate_limiter, max_requests=50, time_window=3600)
     def create_customer(self, **kwargs):
 
         try:
@@ -1049,7 +1156,7 @@ class InventoryAuthController(http.Controller):
 
     @http.route('/api/customers', type='http', auth='none', methods=['GET'], csrf=False)
     @require_auth
-    @rate_limited(rate_limiter,max_requests=100, time_window=3600)
+    @rate_limited(rate_limiter, max_requests=100, time_window=3600)
     def get_customers(self, **kwargs):
 
         try:
@@ -1099,7 +1206,7 @@ class InventoryAuthController(http.Controller):
 
     @http.route('/api/customers/<int:customer_id>', type='http', auth='none', methods=['GET'], csrf=False)
     @require_auth
-    @rate_limited(rate_limiter,max_requests=100, time_window=3600)
+    @rate_limited(rate_limiter, max_requests=100, time_window=3600)
     def get_customer_by_id(self, customer_id, **kwargs):
 
         try:

@@ -83,3 +83,16 @@ def build_response_create_invoice(invoice_id, invoice_number, response_time_ms, 
     json_response = json.dumps(response)
 
     return Response(json_response, content_type='application/json', status=200)
+
+
+def make_json_response(payload, status=200):
+    return Response(
+        json.dumps({'status': status, 'success': status < 400, 'data': payload if status < 400 else None,
+                    'error': payload if status >= 400 else None}),
+        status=status,
+        content_type='application/json'
+    )
+
+
+def compute_etag(data):
+    return sha256(json.dumps(data, default=str, sort_keys=True).encode()).hexdigest()
